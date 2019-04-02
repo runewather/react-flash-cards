@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
-import { AsyncStorage, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { Button, Input } from 'react-native-elements'
+import { connect } from 'react-redux'
+import { handleAddDeck } from '../actions/DeckAction'
 
 const style = {
     container: {
@@ -25,7 +27,7 @@ const style = {
     },
 }
 
-export default class NewDeck extends Component {
+class NewDeck extends Component {
     static navigationOptions = ( { navigation } ) => (
         {
             title: 'FLASH CARDS',
@@ -58,14 +60,8 @@ export default class NewDeck extends Component {
     }
 
     addNewDeck = async () => {
-        try {            
-            let deck = {}
-            deck[this.state.inputText] = []
-            await AsyncStorage.mergeItem('deckList', JSON.stringify(deck))  
-            this.props.navigation.navigate('Home')
-        } catch(e) {
-            console.log(e)
-        }
+        this.props.dispatch(handleAddDeck(this.state.inputText))
+        this.props.navigation.navigate('Home')
     }
 
     render() {
@@ -87,3 +83,9 @@ export default class NewDeck extends Component {
         )
     }
 }
+
+const mapStateToProps = state => ({
+    
+})
+
+export default connect(mapStateToProps)(NewDeck)

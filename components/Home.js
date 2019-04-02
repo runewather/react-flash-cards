@@ -1,11 +1,30 @@
 import React, { Component } from 'react'
 import { TouchableWithoutFeedback, View, Text, ScrollView, AsyncStorage } from 'react-native'
 import { Card, Icon } from 'react-native-elements'
+import { connect } from 'react-redux'
+import { handleFetchDecks } from '../actions/DeckAction'
+
+function generateUID () {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+}
 
 class Home extends Component {   
-    async componentDidUpdate() {
-        let decks = await AsyncStorage.getItem('deckList')
-        console.log(decks)
+    componentDidMount() {
+        this.props.dispatch(handleFetchDecks())       
+    }
+
+    showDeckList = () => {
+        return Object.values(this.props.decks).map((deck) => {
+            return (
+                <TouchableWithoutFeedback key={generateUID()} onPress={() => this.props.navigation.navigate('Deck') }>
+                    <Card title={deck.deckName} titleStyle={ {color: '#4F6BBB'} }>
+                        <View style={ { alignItems: 'center'} }>
+                            <Text style={{ color: '#5353C5' }}>{ deck.cards.length } Cards</Text>
+                        </View>                            
+                    </Card>
+                </TouchableWithoutFeedback>
+            )
+        })
     }
 
     static navigationOptions = ( { navigation } ) => (
@@ -39,17 +58,17 @@ class Home extends Component {
         return (            
             <View style={{ marginBottom : 15 }}>
                 <ScrollView>
-                    <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('Deck') }>
-                        <Card title='Deck Name' titleStyle={ {color: '#4F6BBB'} }>
-                            <View style={ { alignItems: 'center'} }>
-                                <Text style={{ color: '#5353C5' }}>45 Cards</Text>
-                            </View>                            
-                        </Card>
-                    </TouchableWithoutFeedback> 
+                    { this.showDeckList() }
                 </ScrollView>                            
             </View>
         )
     }
 }
   
-export default Home
+const mapStateToProps = state => ({
+    decks: {
+        ...state.decks
+    }
+})
+
+export default connect(mapStateToProps)(Home)

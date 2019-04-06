@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
-import { Text, View, TouchableWithoutFeedback } from 'react-native'
-import { Button, Icon } from 'react-native-elements'
-import { createStackNavigator, createAppContainer  } from "react-navigation"
-import NewCard from './NewCard'
+import { Text, View } from 'react-native'
+import { Button } from 'react-native-elements'
 
 const style = {
     container: {
@@ -12,10 +10,15 @@ const style = {
         textAlign: 'center',
         justifyContent: 'center'             
     },
-    deckTitle: {
+    question: {
         textAlign: 'center',
         fontSize: 36,
         color: '#5353C5'
+    },
+    answer: {
+        textAlign: 'center',
+        fontSize: 36,
+        color: 'red'
     },
     deckSubTitle: {
         textAlign: 'center',
@@ -45,22 +48,104 @@ class Quiz extends Component {
         }
     )
 
-    render() {
-        return (
-            <View style={style.container}>
-                <View style={{ marginBottom: 80 }}>
-                    <Text style={style.deckTitle}>Does React Native work with Android?</Text>
-                </View>                
+    constructor(props) {
+        super(props)
+        this.state = {
+            cardIndex: 0,
+            deck: null,
+            answered: false,
+            correct: 0
+        }
+    }
+
+    componentDidMount() {
+        this.setState({ 
+            cardIndex : 0, 
+            answered : false, 
+            correct : 0 
+            })
+    }
+
+    showOptions() {
+        if(this.state.cardIndex == Object.keys(this.state.deck).length) {
+            return (
+                <View style={{ alignItems: 'center' }}>
+                    <View style={{ marginBottom: 60 }}>
+                        <Text style={style.question}>You've finished the quiz!</Text>
+                        <Text style={style.answer}>Questions correct: {this.state.correct}</Text>                                       
+                    </View>
+                    <View style={style.buttonsContainer}>
+                        <Button type="outline" 
+                        buttonStyle={{ marginBottom: 10, backgroundColor: 'white', borderColor: '#A74FBB' }} 
+                        title='Try again!'
+                        onPress={() => this.setState({ 
+                            cardIndex : 0, 
+                            answered : false, 
+                            correct : 0 
+                            })}
+                        />
+                        <Button type="outline" 
+                        buttonStyle={{ marginBottom: 10, backgroundColor: 'white', borderColor: '#A74FBB' }} 
+                        title='Back to Home'
+                        onPress={() => this.props.navigation.navigate('Home') }
+                        />
+                    </View> 
+                </View>
+            )
+        } else if(Object.keys(this.state.deck).length >= this.state.cardIndex && this.state.answered == true) {
+            return (
                 <View style={style.buttonsContainer}>
+                    <View style={{ marginBottom: 20 }}>
+                        <Text style={style.answer}>{ this.state.deck[this.state.cardIndex].answer }</Text>
+                    </View>
                     <Button type="outline" 
                     buttonStyle={{ marginBottom: 10, backgroundColor: 'white', borderColor: '#9153C5' }} 
                     title='Correct'
-                    onPress={() => null}
+                    onPress={() => this.setState({ 
+                        cardIndex : this.state.cardIndex + 1, 
+                        answered : false, 
+                        correct: this.state.correct + 1 
+                        })}
                     />
                     <Button type="outline" 
                     buttonStyle={{ marginBottom: 10, backgroundColor: 'white', borderColor: '#A74FBB' }} 
-                    title='Incorrect'/>
+                    title='Incorrect'
+                    onPress={() => this.setState({ 
+                        cardIndex : this.state.cardIndex + 1, 
+                        answered : false,  
+                        })}
+                    />
+                </View>
+            )
+        } else if(this.state.answered == false) {
+            return (
+                <View>
+                    <Button type="outline" 
+                    buttonStyle={{ marginBottom: 10, backgroundColor: 'white', borderColor: '#9153C5' }} 
+                    title='Show Answer'
+                    onPress={() => this.setState({ answered : true })}
+                    />
+                </View>
+            )
+        }
+    }
+
+    componentDidMount() {
+        this.setState({
+            deck : this.props.navigation.getParam('deck')
+        })  
+    }
+
+    render() {
+        return (
+            <View style={style.container}>
+                <Text></Text>
+                <View style={{ marginBottom: 20 }}>
+                    <Text style={style.question}>{this.state.deck != null 
+                    && Object.values(this.state.deck)[this.state.cardIndex] != undefined 
+                    ? Object.values(this.state.deck)[this.state.cardIndex].question : null}</Text>
                 </View>                
+                { this.state.deck != null ? this.showOptions() : null }              
             </View>
         )
     }

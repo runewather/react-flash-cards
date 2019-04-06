@@ -1,8 +1,9 @@
 import { AsyncStorage } from 'react-native'
 
 export const FETCH_DECKS = 'FETCH_DECKS'
-export const ADD_DECK = 'ADD_DECK'
-const DECK_LIST_STORAGE = 'DECK_LIST'
+export const FETCH_DECK_CARDS = 'FETCH_DECK_CARDS'
+
+const DECK_LIST = 'DECK_LIST'
 
 function fetchDecksAction(decks) {
     return {
@@ -11,9 +12,36 @@ function fetchDecksAction(decks) {
     }
 }
 
+function fetchDeckCardsAction(deck) {
+    return {
+        type: FETCH_DECK_CARDS,
+        deck
+    }
+}
+
+export function handleAddCard(deckName, card) {
+    return async (dispatch) => {
+        let decks = await AsyncStorage.getItem(DECK_LIST)
+        decks = JSON.parse(decks)
+        decks[deckName].push(card)
+        await AsyncStorage.setItem(DECK_LIST, JSON.stringify(decks))
+        dispatch(handleFetchDeckCards(deckName))
+    }
+}
+
+export function handleFetchDeckCards(deckName) {
+    return async (dispatch) => {
+        let decks = await AsyncStorage.getItem(DECK_LIST)
+        if(decks != null)            
+            decks = JSON.parse(decks)
+            let deck = decks[deckName]
+            dispatch(fetchDeckCardsAction(deck))
+    }
+}
+
 export function handleFetchDecks() {
     return async (dispatch) => {
-        const decks = await AsyncStorage.getItem(DECK_LIST_STORAGE)
+        const decks = await AsyncStorage.getItem(DECK_LIST)
         if(decks != null)            
             dispatch(fetchDecksAction(JSON.parse(decks)))
     }
@@ -22,11 +50,8 @@ export function handleFetchDecks() {
 export function handleAddDeck(deckName) {
     return async (dispatch) => {
         let deck = {}
-        deck[deckName] = {
-            deckName: deckName,
-            cards: []
-        }        
-        await AsyncStorage.mergeItem(DECK_LIST_STORAGE, JSON.stringify(deck))
+        deck[deckName] = []
+        await AsyncStorage.mergeItem(DECK_LIST, JSON.stringify(deck))
         dispatch(handleFetchDecks())
     }
 }

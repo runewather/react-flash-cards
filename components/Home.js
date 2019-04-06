@@ -3,23 +3,26 @@ import { TouchableWithoutFeedback, View, Text, ScrollView, AsyncStorage } from '
 import { Card, Icon } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { handleFetchDecks } from '../actions/DeckAction'
-
-function generateUID () {
-    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-}
+import { generateUID } from '../utils/utils'
 
 class Home extends Component {   
-    componentDidMount() {
-        this.props.dispatch(handleFetchDecks())       
+
+    componentDidMount() {  
+        this.props.navigation.addListener(
+            'willFocus',
+            () => {
+                this.props.dispatch(handleFetchDecks()) 
+            }
+        );    
     }
 
-    showDeckList = () => {
-        return Object.values(this.props.decks).map((deck) => {
+    showDeckList = (decks) => {
+        return Object.keys(decks).map((deckName) => {
             return (
-                <TouchableWithoutFeedback key={generateUID()} onPress={() => this.props.navigation.navigate('Deck') }>
-                    <Card title={deck.deckName} titleStyle={ {color: '#4F6BBB'} }>
+                <TouchableWithoutFeedback key={generateUID()} onPress={() => this.props.navigation.navigate('Deck', { deckName : deckName }) }>
+                    <Card title={deckName} titleStyle={ {color: '#4F6BBB'} }>
                         <View style={ { alignItems: 'center'} }>
-                            <Text style={{ color: '#5353C5' }}>{ deck.cards.length } Cards</Text>
+                            <Text style={{ color: '#5353C5' }}>{ decks[deckName] != null ? decks[deckName].length : null} Cards</Text>
                         </View>                            
                     </Card>
                 </TouchableWithoutFeedback>
@@ -56,9 +59,9 @@ class Home extends Component {
 
     render() {
         return (            
-            <View style={{ marginBottom : 15 }}>
+            <View style={{ marginBottom : 15 }} >
                 <ScrollView>
-                    { this.showDeckList() }
+                    { this.showDeckList(this.props.decks) }
                 </ScrollView>                            
             </View>
         )

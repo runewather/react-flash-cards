@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import { Text, View, AsyncStorage } from 'react-native'
-import { Button, Icon } from 'react-native-elements'
-import { createStackNavigator, createAppContainer  } from "react-navigation"
-import NewCard from './NewCard'
+import { Text, View } from 'react-native'
+import { Button } from 'react-native-elements'
+import { connect } from 'react-redux'
+import { handleFetchDeckCards } from '../actions/DeckAction'
 
 const style = {
     container: {
@@ -30,7 +30,7 @@ const style = {
 class Deck extends Component {      
     static navigationOptions = ( { navigation } ) => (
         {
-            title: 'DECK NAME',
+            title: navigation.getParam('deckName'),
             headerStyle: {
                 backgroundColor: '#6b52ae'
             },
@@ -45,23 +45,33 @@ class Deck extends Component {
         }
     )
 
-    render() {
+    componentDidMount() {
+        this.props.navigation.addListener(
+            'willFocus',
+            () => {
+                this.props.dispatch(handleFetchDeckCards(this.props.navigation.getParam('deckName')))     
+            }
+        )            
+    }
+
+    render() {   
         return (
             <View style={style.container}>
                 <View style={{ marginBottom: 80 }}>
-                    <Text style={style.deckTitle}>DECK NAME</Text>
-                    <Text style={style.deckSubTitle}>45 Cards</Text>
+                    <Text style={style.deckTitle}>{ this.props.navigation.getParam('deckName') }</Text>
+                    <Text style={style.deckSubTitle}>{ Object.keys(this.props.deck).length } Cards</Text>
                 </View>                
                 <View style={style.buttonsContainer}>
+                    { Object.keys(this.props.deck).length > 0 ? 
                     <Button type="outline" 
                     buttonStyle={{ marginBottom: 10, backgroundColor: 'white', borderColor: '#A74FBB' }} 
                     title='Start Quiz'
-                    onPress={() => this.props.navigation.navigate('Quiz')}
-                    />
+                    onPress={() => this.props.navigation.navigate('Quiz', { deck: this.props.deck })}
+                    /> : null}
                     <Button type="outline" 
                     buttonStyle={{ marginBottom: 10, backgroundColor: 'white', borderColor: '#9153C5' }} 
                     title='Add Card'
-                    onPress={() => this.props.navigation.navigate('NewCard')}
+                    onPress={() => this.props.navigation.navigate('NewCard', { deckName : this.props.navigation.getParam('deckName') })}
                     />                    
                 </View>                
             </View>
@@ -69,4 +79,10 @@ class Deck extends Component {
     }
 }
 
-export default Deck
+const mapStateToProps = state => ({
+    deck: {
+        ...state.deck
+    }
+})
+
+export default connect(mapStateToProps)(Deck)

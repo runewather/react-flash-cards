@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { Text, View } from 'react-native'
 import { Button, Input } from 'react-native-elements'
+import { connect } from 'react-redux'
+import { handleAddCard, handleFetchDeckCards } from '../actions/DeckAction'
 
 const style = {
     container: {
@@ -25,7 +27,7 @@ const style = {
     },
 }
 
-export default class NewCard extends Component { 
+class NewCard extends Component { 
     static navigationOptions = ( { navigation } ) => (
         {
             title: 'NEW CARD',
@@ -43,7 +45,39 @@ export default class NewCard extends Component {
             )
         }
     )
-    render() {
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            questionText : '',
+            answerText: ''
+        }
+    }
+    
+    addNewCard = () => {
+        if(this.state.questionText != "" && this.state.answerText != "") {
+            card = {}
+            card.question = this.state.questionText
+            card.answer = this.state.answerText
+            const deckName = this.props.navigation.getParam('deckName')
+            this.props.dispatch(handleAddCard(deckName, card))
+            this.props.navigation.goBack()
+        }
+    }
+
+    handleQuestionInput = (e) => {
+        this.setState({
+            questionText: e
+        })  
+    }
+
+    handleAnswerInput = (e) => {
+        this.setState({
+            answerText: e
+        })  
+    }
+
+    render() {       
         return (
             <View style={style.container}>
                 <View>
@@ -51,15 +85,22 @@ export default class NewCard extends Component {
                         Question:
                     </Text>                    
                 </View>
-                <Input placeholder='Question'/>
-                <Input placeholder='Answer'/>
+                <Input placeholder='Question' onChangeText={ this.handleQuestionInput }/>
+                <Input placeholder='Answer' onChangeText={ this.handleAnswerInput }/>
                 <View style={ {marginTop: 20} }>
                     <Button type="outline" 
                     buttonStyle={{ marginBottom: 10, backgroundColor: 'white', borderColor: '#9153C5' }} 
-                    title='Submit'/>
+                    title='Submit'
+                    onPress={ this.addNewCard } />
                 </View>                
             </View>
         )
     }
 }
+
+const mapStateToProps = state => ({
+    
+})
+
+export default connect(mapStateToProps)(NewCard)
 

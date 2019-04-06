@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Text, View } from 'react-native'
 import { Button } from 'react-native-elements'
+import { clearLocalNotification } from '../utils/utils'
 
 const style = {
     container: {
@@ -68,6 +69,7 @@ class Quiz extends Component {
 
     showOptions() {
         if(this.state.cardIndex == Object.keys(this.state.deck).length) {
+            clearLocalNotification()
             return (
                 <View style={{ alignItems: 'center' }}>
                     <View style={{ marginBottom: 60 }}>
@@ -86,8 +88,8 @@ class Quiz extends Component {
                         />
                         <Button type="outline" 
                         buttonStyle={{ marginBottom: 10, backgroundColor: 'white', borderColor: '#A74FBB' }} 
-                        title='Back to Home'
-                        onPress={() => this.props.navigation.navigate('Home') }
+                        title='Back to Deck'
+                        onPress={() => this.props.navigation.goBack()}
                         />
                     </View> 
                 </View>

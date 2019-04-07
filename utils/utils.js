@@ -3,15 +3,13 @@ import { AsyncStorage } from 'react-native'
 
 const NOTIFICATION_KEY = 'NOTIFICATION_KEY'
 
-export function generateUID () {
-    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+const NOTIFICATION = {
+    title: 'Flashcards',
+    body: 'Dont forget to play some quizzes today!'
 }
 
-function createLocalNotification() {
-    return {
-        title: 'Flashcards',
-        body: 'Dont forget to play some quizzes today!'
-    }
+export function generateUID () {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
 }
 
 export function clearLocalNotification () {
@@ -31,7 +29,7 @@ export function setLocalNotification() {
 
                             let tomorrow = (new Date()).getDate() + 1
 
-                            Notifications.scheduleLocalNotificationAsync(createLocalNotification(), {
+                            Notifications.scheduleLocalNotificationAsync(NOTIFICATION, {
                                 time: tomorrow,
                                 repeat: 'day'
                             })

@@ -8,14 +8,14 @@ const DECK_LIST = 'DECK_LIST'
 function fetchDecksAction(decks) {
     return {
         type: FETCH_DECKS,
-        decks
+        payload: decks
     }
 }
 
 function fetchDeckCardsAction(deck) {
     return {
         type: FETCH_DECK_CARDS,
-        deck
+        payload: deck
     }
 }
 

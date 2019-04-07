@@ -4,11 +4,11 @@ export default function deckList(state = {}, action) {
     switch(action.type) {
         case FETCH_DECKS:
             return {
-                decks: action.decks
+                decks: action.payload
             }
         case FETCH_DECK_CARDS: 
             return {
-                deck: action.deck
+                deck: action.payload
             }
         default:
             return state        

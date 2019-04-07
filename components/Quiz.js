@@ -49,14 +49,11 @@ class Quiz extends Component {
         }
     )
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            cardIndex: 0,
-            deck: null,
-            answered: false,
-            correct: 0
-        }
+    state = {
+        cardIndex: 0,
+        deck: null,
+        answered: false,
+        correct: 0
     }
 
     componentDidMount() {

@@ -61,7 +61,7 @@ class NewDeck extends Component {
 
     addNewDeck = async () => {
         this.props.dispatch(handleAddDeck(this.state.inputText))
-        this.props.navigation.navigate('Home')
+        this.props.navigation.navigate('Deck', { deckName: this.state.inputText })
     }
 
     render() {

@@ -4,23 +4,12 @@ import thunk from 'redux-thunk'
 import { Provider } from 'react-redux'
 import { createStackNavigator, createAppContainer  } from "react-navigation"
 
-import Home from './components/Home'
-import Deck from './components/Deck'
-import NewDeck from './components/NewDeck'
-import NewCard from './components/NewCard'
-import Quiz from './components/Quiz'
-
 import deckList from './reducers/DeckList'
 
 import { setLocalNotification, clearLocalNotification } from './utils/utils'
+import { routes } from './utils/routes'
 
-const AppNavigator = createStackNavigator({
-  Home: Home,
-  Deck: Deck,
-  NewDeck: NewDeck,
-  NewCard: NewCard,
-  Quiz: Quiz    
-});
+const AppNavigator = createStackNavigator(routes);
 
 const AppContainer = createAppContainer(AppNavigator)
 

@@ -6,7 +6,6 @@ import { handleFetchDecks } from '../actions/DeckAction'
 import { generateUID } from '../utils/utils'
 
 class Home extends Component {   
-
     componentDidMount() {  
         this.props.navigation.addListener(
             'willFocus',
